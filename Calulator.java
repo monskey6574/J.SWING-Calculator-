@@ -1,3 +1,4 @@
+import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 
@@ -10,13 +11,27 @@ class MyCalculator extends JFrame { // MyCalculator extends JFrame
     JButton button3;
     JButton button4;
     JLabel label;
+    JTextField textField;
 
     MyCalculator() { // Constructor of MyCalculator class to set up the layout of the frame
         setSize(400, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("Calculator");
         setLocationRelativeTo(null);
-        setLayout(new GridLayout(4,4));
+        setLayout(new BorderLayout());
+
+        textField = new JTextField();
+        textField.setFont(new Font(getName(), Font.BOLD, 20));
+        add("North",textField);
+
+        JPanel btnpanel = new JPanel();
+        btnpanel.setLayout(new GridLayout(4,4));
+        add("Center",btnpanel);
+       
+
+
+
+
 
         JButton[] buttonArr = new JButton[16];
 
@@ -25,7 +40,7 @@ class MyCalculator extends JFrame { // MyCalculator extends JFrame
         for(int i = 0; i<buttons.length;i++){
             buttonArr[i]=new JButton(buttons[i]);
             buttonArr[i].setFont(new Font(getName(), Font.BOLD, 20));
-            add(buttonArr[i]);
+            btnpanel.add(buttonArr[i]);
 
         }
 
