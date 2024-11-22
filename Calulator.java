@@ -1,93 +1,82 @@
-import java.awt.BorderLayout;
-import java.awt.Font;
-import java.awt.GridLayout;
-
+import java.awt.*;
+import java.awt.event.*;
 import javax.swing.*;
 
-class MyCalculator extends JFrame { // MyCalculator extends JFrame
+class MyCalculator extends JFrame implements ActionListener {
 
-    JButton button1;
-    JButton button2;
-    JButton button3;
-    JButton button4;
-    JLabel label;
-    JTextField textField;
+    JButton[] buttonArr = new JButton[16];
+    String[] buttons = {"7", "8", "9", "*", "4", "5", "6", "/", "1", "2", "3", "+", "C", "0", "=", "-"};
+    JTextField display; // Text field to show input and results
+    String currentInput = ""; // Keeps track of the current input
+    String operator = ""; // Stores the operator
+    double num1 = 0; // Stores the first number for calculations
 
-    MyCalculator() { // Constructor of MyCalculator class to set up the layout of the frame
+    MyCalculator() {
+        setTitle("Calculator");
         setSize(400, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setTitle("Calculator");
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        textField = new JTextField();
-        textField.setFont(new Font(getName(), Font.BOLD, 20));
-        add("North",textField);
+        // Create display
+        display = new JTextField();
+        display.setFont(new Font("Arial", Font.BOLD, 24));
+        display.setHorizontalAlignment(JTextField.RIGHT);
+        display.setEditable(false); // Prevent user typing
+        add(display, BorderLayout.NORTH);
 
-        JPanel btnpanel = new JPanel();
-        btnpanel.setLayout(new GridLayout(4,4));
-        add("Center",btnpanel);
-       
+        // Create button panel
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new GridLayout(4, 4, 5, 5)); // 4x4 grid
+        add(buttonPanel, BorderLayout.CENTER);
 
-
-
-
-
-        JButton[] buttonArr = new JButton[16];
-
-        String[] buttons = {"7", "8", "9", "*", "4", "5", "6", "/", "1", "2", "3", "+", "C", "0", "=", "-"};
-
-        for(int i = 0; i<buttons.length;i++){
-            buttonArr[i]=new JButton(buttons[i]);
-            buttonArr[i].setFont(new Font(getName(), Font.BOLD, 20));
-            btnpanel.add(buttonArr[i]);
-
+        // Initialize buttons
+        for (int i = 0; i < buttons.length; i++) {
+            buttonArr[i] = new JButton(buttons[i]);
+            buttonArr[i].setFont(new Font("Arial", Font.BOLD, 20));
+            buttonArr[i].addActionListener(this); // Add action listener
+            buttonPanel.add(buttonArr[i]);
         }
 
-
-
-
-
-        // Set a layout manager
-
-        // button1 = new JButton();
-        // button1.setText("Click me");
-        // button1.setFont(new Font("Arial", Font.BOLD, 20));
-        // button1.setBounds(150, 150, 100, 50); // x, y, width, height
-
-        // button2 = new JButton();
-        // button2.setText("Click me");
-        // button2.setFont(new Font("Arial", Font.BOLD, 20));
-        // button2.setBounds(150, 150, 100, 50); // x, y, width, height
-
-        // button3 = new JButton();
-        // button3.setText("Click me");
-        // button3.setFont(new Font("Arial", Font.BOLD, 20));
-        // button3.setBounds(150, 150, 100, 50); // x, y, width, height
-
-        // button4 = new JButton();
-        // button4.setText("Click me");
-        // button4.setFont(new Font("Arial", Font.BOLD, 20));
-        // button4.setBounds(150, 150, 100, 50); // x, y, width, height
-
-
-        // label = new JLabel();
-        // label.setText("Hello World");
-        // label.setFont(new Font("Arial", Font.BOLD, 20));
-        // label.setBounds(150, 100, 100, 50); // x, y, width, height
-
-
-        // add(button1); // Add the button to the frame
-        // add(button2); // Add the button to the frame
-        // add(button3); // Add the button to the frame
-        // add(button4); // Add the button to the frame
-
-        setVisible(true); // Make the frame visible after adding components
+        setVisible(true);
     }
-}
 
-class Calculator {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        String command = e.getActionCommand(); // Get the text of the button clicked
+
+        if (command.matches("[0-9]")) { // If it's a number
+            currentInput += command; // Append to current input
+            display.setText(currentInput);
+        } else if (command.matches("[+\\-*/]")) { // If it's an operator
+            operator = command; // Store the operator
+            num1 = Double.parseDouble(currentInput); // Store the first number
+            currentInput = ""; // Reset input for the second number
+        } else if (command.equals("=")) { // If it's the equals button
+            double num2 = Double.parseDouble(currentInput); // Parse the second number
+            double result = performOperation(num1, num2, operator); // Perform calculation
+            display.setText(String.valueOf(result)); // Display the result
+            currentInput = ""; // Reset input
+        } else if (command.equals("C")) { // If it's the clear button
+            currentInput = "";
+            operator = "";
+            num1 = 0;
+            display.setText("");
+        }
+    }
+
+    // Helper method to perform the operation
+    private double performOperation(double num1, double num2, String operator) {
+        switch (operator) {
+            case "+": return num1 + num2;
+            case "-": return num1 - num2;
+            case "*": return num1 * num2;
+            case "/": return num2 != 0 ? num1 / num2 : 0; // Prevent division by zero
+            default: return 0;
+        }
+    }
+
     public static void main(String[] args) {
-        new MyCalculator(); // Create an object of MyCalculator class
+        new MyCalculator();
     }
 }
